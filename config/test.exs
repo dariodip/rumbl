@@ -8,15 +8,15 @@ use Mix.Config
 config :rumbl, Rumbl.Repo,
   username: "postgres",
   password: "Phoenix1234",
-  database: "rumbl_test#{System.get_env("MIX_TEST_PARTITION")}",
+  database: "rumbl_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
-  # Configure the database for GitHub Actions
+# Configure the database for GitHub Actions
 if System.get_env("GITHUB_ACTIONS") do
-  config :app, Rumbl.Repo,
-    username: "postgres",
-    password: "postgres"
+  config :rumbl, Rumbl.Repo,
+    password: System.get_env("DB_PASSWORD"),
+    hostname: System.get_env("DB_HOST")
 end
 
 # We don't run a server during test. If one is required,

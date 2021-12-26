@@ -32,16 +32,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     services:
-      db:
-        image: postgres:11
+      postgres:
+        image: postgres:latest
         ports: ['5432:5432']
         env:
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          POSTGRES_DB: rumbl
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
     - uses: actions/checkout@v2
     - name: Set up Elixir
@@ -57,6 +55,9 @@ jobs:
         restore-keys: ${{ runner.os }}-mix-
     - name: Run tests
       run: mix test
+      env:
+        DB_PASSWORD: postgres
+        DB_HOST: localhost
   check:
     name: Check code
     needs: build
@@ -92,3 +93,5 @@ jobs:
       run: mix dialyzer --plt
     - name: Run dialyzer
       run: mix dialyzer
+    - name: Run credo
+      run: mix credo
