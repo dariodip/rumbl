@@ -1,5 +1,7 @@
 # Rumbl
 
+[![Elixir CI](https://github.com/dariodip/rumbl/actions/workflows/elixir.yml/badge.svg)](https://github.com/dariodip/rumbl/actions/workflows/elixir.yml)
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`

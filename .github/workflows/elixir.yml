@@ -8,10 +8,59 @@ on:
 
 jobs:
   build:
-
-    name: Build and test
+    name: Build
     runs-on: ubuntu-latest
-
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Elixir
+      uses: erlef/setup-beam@988e02bfe678367a02564f65ca2e37726dc0268f
+      with:
+        elixir-version: '1.13.0' # Define the elixir version [required]
+        otp-version: '24.1' # Define the OTP version [required]
+    - name: Restore dependencies cache
+      uses: actions/cache@v2
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-mix-
+    - name: Install dependencies
+      run: mix deps.get
+    - name: Compile
+      run: mix compile
+  test:
+    name: Run tests
+    needs: build
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:11
+        ports: ['5432:5432']
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Elixir
+      uses: erlef/setup-beam@988e02bfe678367a02564f65ca2e37726dc0268f
+      with:
+        elixir-version: '1.13.0' # Define the elixir version [required]
+        otp-version: '24.1' # Define the OTP version [required]
+    - name: Restore dependencies cache
+      uses: actions/cache@v2
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-mix-
+    - name: Run tests
+      run: mix test
+  check:
+    name: Check code
+    needs: build
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Set up Elixir
@@ -35,10 +84,6 @@ jobs:
           ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-plt
         path: |
           priv/plts
-    - name: Install dependencies
-      run: mix deps.get
-    - name: Run tests
-      run: mix test
     - name: Check format
       run: mix format --check-formatted
       # Create PLTs if no cache was found
