@@ -50,7 +50,9 @@ defmodule Rumbl.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:credo, "~> 1.4", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:comeonin, "~> 4.1"},
+      {:argon2_elixir, "~> 1.2"},
     ]
   end
 
