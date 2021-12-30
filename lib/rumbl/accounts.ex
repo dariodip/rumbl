@@ -3,6 +3,8 @@ defmodule Rumbl.Accounts do
   The Accounts context.
   """
 
+  import Ecto.Query
+
   alias Rumbl.Accounts.User
   alias Rumbl.Repo
 
@@ -126,5 +128,47 @@ defmodule Rumbl.Accounts do
   """
   def change_credential(%Credential{} = credential, attrs \\ %{}) do
     Credential.changeset(credential, attrs)
+  end
+
+  @doc """
+  changes an user
+  """
+  def change_registration(%User{} = user, params) do
+    User.registration_changeset(user, params)
+  end
+
+  @doc """
+  creates a registration changeset from user-input and inserts it to the
+  database
+  """
+  def register_user(attrs \\ %{}) do
+    %User{}
+    |> User.registration_changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def get_user_by_email(email) do
+    from(u in User,
+      join: c in assoc(u, :credential),
+      where: c.email == ^email
+    )
+    |> Repo.one()
+    |> Repo.preload(:credential)
+  end
+
+  def authenticate_by_email_and_pass(email, given_pass) do
+    user = get_user_by_email(email)
+
+    cond do
+      user && Comeonin.Argon2.checkpw(given_pass, user.credential.password_hash) ->
+        {:ok, user}
+
+      user ->
+        {:error, :unauthorized}
+
+      true ->
+        Comeonin.Argon2.dummy_checkpw()
+        {:error, :not_found}
+    end
   end
 end

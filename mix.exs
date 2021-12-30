@@ -52,7 +52,7 @@ defmodule Rumbl.MixProject do
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:comeonin, "~> 4.1"},
-      {:argon2_elixir, "~> 1.2"},
+      {:argon2_elixir, "~> 1.2"}
     ]
   end
 
