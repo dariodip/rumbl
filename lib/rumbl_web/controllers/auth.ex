@@ -1,4 +1,8 @@
 defmodule RumblWeb.Auth do
+  @moduledoc """
+  Plug for managing authentication
+  """
+
   import Plug.Conn
   import Phoenix.Controller
   alias Rumbl.Accounts

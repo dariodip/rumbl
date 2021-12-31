@@ -1,4 +1,8 @@
 defmodule Rumbl.Accounts.Credential do
+  @moduledoc """
+  Schema for Credential
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 
