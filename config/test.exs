@@ -10,7 +10,8 @@ config :rumbl, Rumbl.Repo,
   password: "Phoenix1234",
   database: "rumbl_test",
   hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox
+  pool: Ecto.Adapters.SQL.Sandbox,
+  show_sensitive_data_on_connection_error: true
 
 # Configure the database for GitHub Actions
 if System.get_env("GITHUB_ACTIONS") do
