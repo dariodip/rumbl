@@ -30,7 +30,9 @@
 		"mtxr.sqltools",
 		"mtxr.sqltools-driver-pg",
 		"editorconfig.editorconfig",
-		"redhat.vscode-yaml"
+		"redhat.vscode-yaml",
+		"hbenl.vscode-test-explorer",
+		"adamzapasnik.elixir-test-explorer"
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
