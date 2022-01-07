@@ -13,6 +13,7 @@ defmodule RumblWeb.VideoController do
 
   def index(conn, _params, user) do
     videos = Multimedia.list_user_videos(user)
+
     render(conn, "index.html", videos: videos)
   end
 
