@@ -17,7 +17,10 @@ let Video = {
         let msgContainer = document.getElementById("msg-container");
         let msgInput = document.getElementById("msg-input");
         let postButton = document.getElementById("msg-submit");
-        let vidChannel = socket.channel("videos:" + videoId);
+        let lastSeenId = 0;
+        let vidChannel = socket.channel("videos:" + videoId, () => {
+            return { last_seen_id: lastSeenId }
+        });
         postButton.addEventListener("click", e => {
             let payload = { body: msgInput.value, at: Player.getCurrentTime() };
             vidChannel.push("new_annotation", payload)
@@ -25,22 +28,59 @@ let Video = {
             msgInput.value = "";
         });
         vidChannel.on("new_annotation", (resp) => {
+            lastSeenId = resp.id;
             this.renderAnnotation(msgContainer, resp);
         });
+        msgContainer.addEventListener("click", e => {
+            e.preventDefault();
+            let seconds = e.target.getAttribute("data-seek") || e.target.parentNode.getAttribute("data-seek");
+            if (!seconds) { return }
+            Player.seekTo(seconds);
+        });
         vidChannel.join()
-            .receive("ok", resp => console.log("joined the video channel", resp))
+            .receive("ok", ({ annotations }) => {
+                let ids = annotations.map(ann => ann.id);
+                if (ids.length > 0) {
+                    lastSeenId = Math.max(...ids);
+                }
+                this.scheduleMessages(msgContainer, annotations)
+            })
             .receive("error", reason => console.log("joined failed", reason));
     },
     renderAnnotation(msgContainer, { user, body, at }) {
         let template = document.createElement("div");
         template.innerHTML = `
-        <a href="#" data-seed="${this.esc(at)}">
+        <a href="#" data-seek="${this.esc(at)}">
+            [${this.formatTime(at)}]
             <b>${this.esc(user.username)}</b>:
             ${this.esc(body)}
         </a>
         `;
         msgContainer.appendChild(template);
         msgContainer.scrollTop = msgContainer.scrollHeight;
+    },
+    scheduleMessages(msgContainer, annotations) {
+        clearTimeout(this.scheduleTimer);
+        this.scheduleTimer = setTimeout(() => {
+            let ctime = Player.getCurrentTime();
+            let remaining = this.renderAtTime(annotations, ctime, msgContainer);
+            this.scheduleMessages(msgContainer, remaining)
+        }, 1000);
+    },
+    renderAtTime(annotations, seconds, msgContainer) {
+        return annotations.filter(ann => {
+            if (ann.at > seconds) {
+                return true;
+            } else {
+                this.renderAnnotation(msgContainer, ann);
+                return false;
+            }
+        })
+    },
+    formatTime(at) {
+        let date = new Date(null);
+        date.setSeconds(at / 1000);
+        return date.toISOString().substr(14, 5);
     },
     esc(str) {
         let div = document.createElement("div");
