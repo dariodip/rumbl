@@ -1,4 +1,8 @@
 defmodule Rumbl.Multimedia.Annotation do
+  @moduledoc """
+  A schema for handling annotations for videos
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

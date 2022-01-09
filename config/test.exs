@@ -7,11 +7,10 @@ use Mix.Config
 # Run `mix help test` for more information.
 config :rumbl, Rumbl.Repo,
   username: "postgres",
-  password: "Phoenix1234",
-  database: "rumbl_test",
+  password: "postgres",
+  database: "rumbl_test#{System.get_env("MIX_TEST_PARTITION")}",
   hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox,
-  show_sensitive_data_on_connection_error: true
+  pool: Ecto.Adapters.SQL.Sandbox
 
 # Configure the database for GitHub Actions
 if System.get_env("GITHUB_ACTIONS") do
@@ -22,7 +21,7 @@ end
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
-config :rumbl, RumblWeb.Endpoint,
+config :rumbl_web, RumblWeb.Endpoint,
   http: [port: 4002],
   server: false
 

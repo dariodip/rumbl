@@ -1,4 +1,8 @@
 defmodule Rumbl.Multimedia.Permalink do
+  @moduledoc """
+  A custom type to extract an ID from a permalink
+  """
+
   @behaviour Ecto.Type
 
   def type, do: :id
@@ -24,5 +28,13 @@ defmodule Rumbl.Multimedia.Permalink do
 
   def load(integer) when is_integer(integer) do
     {:ok, integer}
+  end
+
+  def equal?(permalink, other) do
+    permalink == other
+  end
+
+  def embed_as(_) do
+    :self
   end
 end

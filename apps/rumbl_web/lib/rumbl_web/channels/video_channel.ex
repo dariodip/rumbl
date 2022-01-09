@@ -1,4 +1,8 @@
 defmodule RumblWeb.VideoChannel do
+  @moduledoc """
+  A channel to manage annotations for videos
+  """
+
   use RumblWeb, :channel
   alias Rumbl.Accounts
   alias Rumbl.Multimedia
