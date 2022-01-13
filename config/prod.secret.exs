@@ -30,6 +30,8 @@ config :rumbl_web, RumblWeb.Endpoint,
   ],
   secret_key_base: secret_key_base
 
+config :rumbl, :wolfram, app_id: "AH4V6E-3UL9E66Q2H"
+
 # ## Using releases (Elixir v1.9+)
 #
 # If you are doing OTP releases, you need to instruct Phoenix
