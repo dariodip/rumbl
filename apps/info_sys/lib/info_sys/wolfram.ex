@@ -1,4 +1,8 @@
 defmodule InfoSys.Wolfram do
+  @moduledoc """
+  A backend to fetch data from wolfram
+  """
+
   import SweetXml
   alias InfoSys.Result
 
@@ -13,9 +17,7 @@ defmodule InfoSys.Wolfram do
   def compute(query_str, _opts) do
     query_str
     |> fetch_xml()
-    |> xpath(
-      ~x"/queryresult/pod[contains(@title, 'Result') or contains(@title, 'Definitions')]/subpod/plaintext/text()"
-    )
+    |> xpath(~x"//queryresult/pod[text()]/subpod/plaintext/text()")
     |> build_result()
   end
 
@@ -27,7 +29,6 @@ defmodule InfoSys.Wolfram do
 
   defp fetch_xml(query) do
     {:ok, {_, _, body}} = :httpc.request(String.to_charlist(url(query)))
-
     body
   end
 
