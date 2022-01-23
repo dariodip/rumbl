@@ -1,4 +1,8 @@
 defmodule RumblWeb.TestHelpers do
+  @moduledoc """
+  Test helpers for RumblWeb
+  """
+
   @default_video %{
     url: "test@example.com",
     description: "a video",
